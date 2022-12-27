@@ -1,5 +1,8 @@
 # secret-santa
 
+## Setup
+GMail has deprecated password entry, so you must set up an application-specific password and be able to provide it on the command line in order to use yagmail to send the emails.
+
 ```
 usage: secret_santa.py [-h] [-f FILE] [-d] -e EMAIL -p PASSWORD
 
@@ -16,3 +19,6 @@ options:
   -p PASSWORD, --password PASSWORD
                         application-specific password for gmail SMTP access
 ```
+
+### ToDos
+- [ ] Decouple the password requirement while running in debug (no-send) mode
