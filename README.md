@@ -3,6 +3,7 @@
 ## Setup
 GMail has deprecated password entry, so you must set up an application-specific password and be able to provide it on the command line in order to use yagmail to send the emails.
 
+## Usage
 ```
 usage: secret_santa.py [-h] [-f FILE] [-d] -e EMAIL -p PASSWORD
 
