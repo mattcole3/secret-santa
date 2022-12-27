@@ -11,9 +11,6 @@ def secret_santa(participants, debug):
     names = list(participants.keys())
     recipients = list(participants.keys())
 
-    if debug:
-        print(names)
-        print(recipients)
     random.shuffle(names)
     random.shuffle(recipients)
 
@@ -52,14 +49,7 @@ def main():
     with open(args.file) as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            if args.debug:
-                print("new row")
-                print(row)
             participants[row['Name']] = row['Email']
-
-    if debug:
-        print("Participant list as read in")
-        print(participants)
 
     iter_count = 0
     collisions = True
@@ -71,9 +61,7 @@ def main():
 
 
     if args.debug:
-        print("Here is the assignment dict")
-        print(secret_santa_assigns)
-        print("---")
+        print("Your theoretical assignment list:")
         for name in secret_santa_assigns.keys():
             print(participants[name], name + ', your secret santa recipient is inside', "Your gift goes to: " + secret_santa_assigns[name])
         
