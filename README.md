@@ -1,6 +1,6 @@
 # secret-santa
 
-{
+```
 usage: secret_santa.py [-h] [-f FILE] [-d] -e EMAIL -p PASSWORD
 
 Secret Santa list randomizer and emailer. Provide a CSV with columns for "name" and "email" and it
@@ -15,4 +15,4 @@ options:
                         email address to send secret santa notices from
   -p PASSWORD, --password PASSWORD
                         application-specific password for gmail SMTP access
-}
+```
