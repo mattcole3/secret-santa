@@ -1,8 +1,11 @@
 # secret-santa
-`python3 secret-santa.py -h
-usage: secret-santa.py [-h] [-f FILE] [-d] -e EMAIL -p PASSWORD
 
-Secret Santa
+{
+usage: secret_santa.py [-h] [-f FILE] [-d] -e EMAIL -p PASSWORD
+
+Secret Santa list randomizer and emailer. Provide a CSV with columns for "name" and "email" and it
+will pair two names randomly with no dupes or collisions, and then email all participants their
+assigned giftee.
 
 options:
   -h, --help            show this help message and exit
@@ -12,4 +15,4 @@ options:
                         email address to send secret santa notices from
   -p PASSWORD, --password PASSWORD
                         application-specific password for gmail SMTP access
-`
+}
