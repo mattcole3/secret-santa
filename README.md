@@ -1,5 +1,5 @@
 # secret-santa
-python3 secret-santa.py -h
+`python3 secret-santa.py -h
 usage: secret-santa.py [-h] [-f FILE] [-d] -e EMAIL -p PASSWORD
 
 Secret Santa
@@ -12,3 +12,4 @@ options:
                         email address to send secret santa notices from
   -p PASSWORD, --password PASSWORD
                         application-specific password for gmail SMTP access
+`
