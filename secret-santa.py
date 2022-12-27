@@ -40,7 +40,7 @@ def main():
     debug = False
     secret_santa_assigns = {}
 
-    parser = ap.ArgumentParser(description='Secret Santa')
+    parser = ap.ArgumentParser(prog='secret_santa.py', description='Secret Santa list randomizer and emailer. Provide a CSV with columns for "name" and "email" and it will pair two names randomly with no dupes or collisions, and then email all participants their assigned giftee.')
     parser.add_argument("-f", "--file", help="input file, names and emails")
     parser.add_argument("-d", "--debug", action="store_true", help="increase output verbosity; print list of gifters/recipients; send no emails")
     parser.add_argument("-e", "--email", required=True, help="email address to send secret santa notices from")
