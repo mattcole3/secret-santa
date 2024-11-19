@@ -30,20 +30,21 @@ def secret_santa_shuffle(participants, preseed_assignments, debug):
             print("i is", i, "name is ", name, "recipient is", recipients[i] )
         assignments[name] = recipients[i]
 
+    # Ensure all participants are assigned
+    if len(assignments) != len(participants):
+        raise ValueError("Not all participants were assigned")
+
     return assignments
 
-def secret_santas_collide(secret_santa_assigns, year1, year2, year3, debug):
+def secret_santas_collide(secret_santa_assigns, past_years_assigns, debug):
     for name in secret_santa_assigns.keys():
         if debug:
             print(name, secret_santa_assigns[name])
         if name == secret_santa_assigns[name]:
             return True
-        if name in year1.keys() and secret_santa_assigns[name] == year1[name]:
-            return True
-        if name in year2.keys() and secret_santa_assigns[name] == year2[name]:
-            return True
-        if name in year3.keys() and secret_santa_assigns[name] == year3[name]:
-            return True                    
+        for year_assigns in past_years_assigns:
+            if name in year_assigns.keys() and secret_santa_assigns[name] == year_assigns[name]:
+                return True
     return False
 
 def parse_preseed(preseed_str):
@@ -57,15 +58,11 @@ def parse_preseed(preseed_str):
 def main():
     debug = False
     secret_santa_assigns = {}
-    last_year_assigns = {}
-    other_year_assigns = {}
-    other_other_year_assigns = {}
+    past_years_assigns = []
 
     parser = ap.ArgumentParser(prog='secret_santa.py', description='Secret Santa list randomizer and emailer. Provide a CSV with columns for "name" and "email" and it will pair two names randomly with no dupes or collisions, and then email all participants their assigned giftee.')
     parser.add_argument("-f", "--file", help="input file, names and emails")
-    parser.add_argument("-o1", "--old1", required=False, help="last year's table")
-    parser.add_argument("-o2", "--old2", required=False, help="table from 2 years ago")
-    parser.add_argument("-o3", "--old3", required=False, help="table from 3 years ago")
+    parser.add_argument("-o", "--old", nargs='*', required=False, help="past years' tables")
     parser.add_argument("-d", "--debug", action="store_true", help="increase output verbosity; print list of gifters/recipients; send no emails")
     parser.add_argument("-e", "--email", help="email address to send secret santa notices from")
     parser.add_argument("-p", "--password", help="application-specific password for gmail SMTP access")
@@ -94,48 +91,36 @@ def main():
         for row in reader0:
             participants[row['Name']] = row['Email']
 
-    if args.old1:
-        with open(args.old1) as csvfile:
-            reader1 = csv.DictReader(csvfile)
-            for row in reader1:
-                last_year_assigns[row['Name']] = row['Giftee']
-            print("last year:", last_year_assigns)
-
-    if args.old2:
-        with open(args.old2) as csvfile:
-            reader2 = csv.DictReader(csvfile)
-            for row in reader2:
-                other_year_assigns[row['Name']] = row['Giftee']
-            print("two years ago:", other_year_assigns)
-
-    if args.old3:
-        with open(args.old3) as csvfile:
-            reader3 = csv.DictReader(csvfile)
-            for row in reader3:
-                other_other_year_assigns[row['Name']] = row['Giftee']
-            print("three years ago:", other_other_year_assigns)
+    if args.old:
+        for old_file in args.old:
+            year_assigns = {}
+            with open(old_file) as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    year_assigns[row['Name']] = row['Giftee']
+            past_years_assigns.append(year_assigns)
+            print(f"Assignments from {old_file}:", year_assigns)
 
     iter_count = 0
     collisions = True
     while collisions:
         iter_count = iter_count+1
         print("Randomizing.... Attempt", iter_count)
-        secret_santa_assigns = secret_santa_shuffle(participants, secret_santa_preseed, args.debug)
-        collisions = secret_santas_collide(secret_santa_assigns, last_year_assigns, other_year_assigns, other_other_year_assigns, args.debug)
-    
+        try:
+            secret_santa_assigns = secret_santa_shuffle(participants, secret_santa_preseed, args.debug)
+            collisions = secret_santas_collide(secret_santa_assigns, past_years_assigns, args.debug)
+        except ValueError as e:
+            print(e)
+            collisions = True
+
     if args.debug:
-        print("Your theoretical assignment list:")
-        for name in secret_santa_assigns.keys():
-            print(participants[name], name + ', your secret santa recipient is inside', "Your gift goes to: " + secret_santa_assigns[name])
+        print("Final assignments:")
+        pprint(secret_santa_assigns)
 
     if not args.debug:
         yag = yagmail.SMTP(args.email, args.password)
         for name in secret_santa_assigns.keys():
             yag.send(participants[name], name + ', your secret santa recipient is inside', "Your gift goes to: " + secret_santa_assigns[name])
-
-    if args.debug:
-        print("Final assignments:")
-        pprint(secret_santa_assigns)
 
 if __name__ == "__main__":
     main()
