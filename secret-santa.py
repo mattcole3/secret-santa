@@ -6,7 +6,7 @@ import random
 import smtplib, ssl, getpass
 import yagmail
 
-def secret_santa(participants, debug):
+def secret_santa_shuffle(participants, debug):
     # Shuffle the list of participants to randomly assign gift recipients
     names = list(participants.keys())
     recipients = list(participants.keys())
@@ -29,9 +29,9 @@ def secret_santas_collide(secret_santa_assigns, year1, year2, debug):
             print(name, secret_santa_assigns[name])
         if name == secret_santa_assigns[name]:
             return True
-        if secret_santa_assigns[name] == year1[name]:
+        if name in year1.keys() and secret_santa_assigns[name] == year1[name]:
             return True
-        if secret_santa_assigns[name] == year2[name]:
+        if name in year2.keys() and secret_santa_assigns[name] == year2[name]:
             return True            
     return False
         
@@ -78,7 +78,7 @@ def main():
     while collisions:
         iter_count = iter_count+1
         print("Randomizing.... Attempt", iter_count)
-        secret_santa_assigns = secret_santa(participants, args.debug)
+        secret_santa_assigns = secret_santa_shuffle(participants, args.debug)
         collisions = secret_santas_collide(secret_santa_assigns, last_year_assigns, other_year_assigns, args.debug)
 
 
