@@ -109,6 +109,16 @@ def main():
         print("Randomizing.... Attempt", iter_count)
         secret_santa_assigns = secret_santa_shuffle(participants, secret_santa_preseed, args.debug)
         collisions = secret_santas_collide(secret_santa_assigns, last_year_assigns, other_year_assigns, args.debug)
+    
+    if args.debug:
+        print("Your theoretical assignment list:")
+        for name in secret_santa_assigns.keys():
+            print(participants[name], name + ', your secret santa recipient is inside', "Your gift goes to: " + secret_santa_assigns[name])
+
+    if not args.debug:
+        yag = yagmail.SMTP(args.email, args.password)
+        for name in secret_santa_assigns.keys():
+            yag.send(participants[name], name + ', your secret santa recipient is inside', "Your gift goes to: " + secret_santa_assigns[name])
 
     if args.debug:
         print("Final assignments:")
