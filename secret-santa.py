@@ -81,6 +81,8 @@ def main():
         secret_santa_preseed = parse_preseed(args.preseed)
         if debug:
             print("Pre-seeded assignments:", secret_santa_preseed)
+    else:
+        secret_santa_preseed = {}
 
     # Seed the random number generator
     random.seed(time.time())
